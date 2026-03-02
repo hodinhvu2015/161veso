@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h2>Đăng nhập Admin</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Username" required><br><br>
+        <input type="password" id="password" placeholder="Password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <p id="message"></p>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username, password})
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+        window.location.href = "/admin";
+    } else {
+        document.getElementById("message").innerText = "Sai tài khoản hoặc mật khẩu!";
+    }
+});
+</script>
+</body>
+</html>

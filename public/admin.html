@@ -1,10 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Dashboard</title>
+<title>Admin Dashboard</title>
+<style>
+body { margin:0; font-family: Arial; display:flex; }
+.sidebar {
+  width:220px;
+  height:100vh;
+  background:#2c3e50;
+  color:white;
+  padding:20px;
+}
+.sidebar h2 { text-align:center; }
+.sidebar ul { list-style:none; padding:0; }
+.sidebar li { padding:10px; cursor:pointer; }
+.sidebar li:hover { background:#34495e; }
+
+.main {
+  flex:1;
+  padding:30px;
+  background:#ecf0f1;
+}
+
+.card {
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  margin-bottom:20px;
+}
+</style>
 </head>
 <body>
-    <h1>Trang Admin</h1>
-    <p>Chao mung ban den trang quan ly!</p>
+
+<div class="sidebar">
+  <h2>ADMIN</h2>
+  <ul>
+    <li>Dashboard</li>
+    <li>Users</li>
+    <li>Products</li>
+    <li><a href="/logout" style="color:white;text-decoration:none;">Logout</a></li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>Dashboard</h1>
+
+  <div class="card">
+    <h3>Thống kê</h3>
+    <p>Chào mừng bạn đến trang quản lý.</p>
+  </div>
+
+</div>
+
 </body>
 </html>
