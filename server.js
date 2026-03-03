@@ -39,8 +39,20 @@ async function initDB() {
             username VARCHAR(100) UNIQUE,
             password VARCHAR(255),
             role VARCHAR(20)
-        );
+        );	
     `);
+	await pool.query(`
+  CREATE TABLE IF NOT EXISTS dsd (
+    STT SERIAL PRIMARY KEY,
+    Ten VARCHAR(50),
+    Nhom VARCHAR(50),
+    Vecap1 VARCHAR(50),
+    Vecap2 VARCHAR(50),
+    Vetong VARCHAR(50),
+    Nguon VARCHAR(50),
+    Ngay VARCHAR(50)
+  );
+`);
 
     // Tạo admin mặc định nếu chưa có
     const result = await pool.query(
@@ -65,7 +77,27 @@ initDB();
 /* ============================= */
 /*          ROUTES               */
 /* ============================= */
+app.get("/api/dsd", checkAdmin, async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM dsd ORDER BY STT DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
 
+app.post("/api/dsd", checkAdmin, async (req, res) => {
+  const { Ten, Nhom, Vecap1, Vecap2, Vetong, Nguon, Ngay } = req.body;
+
+  await pool.query(
+    `INSERT INTO dsd (Ten,Nhom,Vecap1,Vecap2,Vetong,Nguon,Ngay)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    [Ten,Nhom,Vecap1,Vecap2,Vetong,Nguon,Ngay]
+  );
+
+  res.json({ success: true });
+});
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public/login.html"));
 });
@@ -98,10 +130,10 @@ app.post("/login", async (req, res) => {
 });
 
 function checkAdmin(req, res, next) {
-    if (!req.session.user || req.session.user.role !== "admin") {
-        return res.redirect("/");
-    }
-    next();
+  if (!req.session.user || req.session.user.role !== "admin") {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  next();
 }
 
 app.get("/admin", checkAdmin, (req, res) => {
