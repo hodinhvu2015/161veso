@@ -5,10 +5,14 @@
 <title>Admin Dashboard</title>
 
 <style>
-body { margin:0; font-family: Arial; display:flex; }
+body { 
+  margin:0; 
+  font-family: Arial; 
+  display:flex; 
+}
 
 .sidebar {
-  width:230px;
+  width:220px;
   height:100vh;
   background:#2c3e50;
   color:white;
@@ -19,19 +23,13 @@ body { margin:0; font-family: Arial; display:flex; }
 
 .sidebar ul { list-style:none; padding:0; }
 
-.sidebar li {
-  padding:12px;
-  cursor:pointer;
-  border-radius:5px;
-}
+.sidebar li { padding:10px; cursor:pointer; }
 
-.sidebar li:hover {
-  background:#34495e;
-}
+.sidebar li:hover { background:#34495e; }
 
 .main {
   flex:1;
-  padding:25px;
+  padding:30px;
   background:#ecf0f1;
   overflow:auto;
 }
@@ -40,25 +38,73 @@ body { margin:0; font-family: Arial; display:flex; }
   background:white;
   padding:20px;
   border-radius:8px;
-  margin-bottom:20px;
 }
 
-table {
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
+/* FILTER BAR */
+.filter-bar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:15px;
+  padding:10px;
+  background:white;
+  border-radius:8px;
 }
 
-th, td {
+.filter-bar input{
   padding:6px;
-  border:1px solid #ccc;
-  text-align:left;
 }
 
-th {
-  background:#34495e;
+.filter-bar button{
+  padding:6px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.filter-bar button:first-of-type{
+  background:#3498db;
   color:white;
 }
+
+.filter-bar button:last-of-type{
+  background:#e74c3c;
+  color:white;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:6px;
+  text-align:center;
+}
+
+thead:nth-of-type(2) th{
+  background:#34495e;
+  color:white;
+  position: sticky;
+  top: 40px;
+  z-index: 9;
+}
+
+/* TOTAL ROW STICKY */
+#pvtvTotalHead tr{
+  background:#ff9800;
+  color:white;
+  font-weight:bold;
+  text-align:center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
 </style>
 </head>
 
@@ -171,9 +217,22 @@ th {
 <!-- PVTV -->
 <div id="pvtvTab" style="display:none;">
   <h2>Danh sách PVTV</h2>
-  <div class="card">
-    <div style="overflow:auto;">
+  
+  <!-- FILTER -->
+    <div class="filter-bar">
+      <label>Chọn ngày:</label>
+      <input type="date" id="filterNgay">
+      <button onclick="loadPVTV()">🔍 Lọc</button>
+      <button onclick="resetFilter()">♻ Tất cả</button>
+    </div>
+
+    <div style="overflow:auto; max-height:600px;">
       <table>
+
+        <!-- TOTAL ROW -->
+        <thead id="pvtvTotalHead"></thead>
+
+        <!-- HEADER -->
         <thead>
           <tr>
             <th>ID</th>
@@ -193,9 +252,13 @@ th {
             <th>STT</th>
           </tr>
         </thead>
+
+        <!-- DATA -->
         <tbody id="pvtvList"></tbody>
+
       </table>
     </div>
+
   </div>
 </div>
 
@@ -211,7 +274,85 @@ function showTab(tab){
   if(tab==="dsnv") loadDSNV();
   if(tab==="pvtv") loadPVTV();
 }
+function resetFilter(){
+  document.getElementById("filterNgay").value = "";
+  loadPVTV();
+}
 
+async function loadPVTV(){
+
+  let ngay = document.getElementById("filterNgay").value;
+  let url = "/api/pvtv";
+
+  if (ngay) {
+    const parts = ngay.split("-");
+    ngay = parts[2] + "-" + parts[1] + "-" + parts[0];
+    url += "?ngay=" + encodeURIComponent(ngay);
+  }
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  let tongDai1=0, tongDai2=0, tongDai3=0;
+  let tongTong=0, tongTra1=0, tongTra2=0, tongTraTong=0;
+  let tongBan=0, tongVL=0, tongVLTra=0;
+
+  const rows = data.map(d => {
+
+    tongDai1 += Number(d.dai1 || 0);
+    tongDai2 += Number(d.dai2 || 0);
+    tongDai3 += Number(d.dai3 || 0);
+    tongTong += Number(d.tong || 0);
+    tongTra1 += Number(d.tra1 || 0);
+    tongTra2 += Number(d.tra2 || 0);
+    tongTraTong += Number(d.tratong || 0);
+    tongBan += Number(d.ban || 0);
+    tongVL += Number(d.vl || 0);
+    tongVLTra += Number(d.vltra || 0);
+
+    return `
+      <tr>
+        <td>${d.id}</td>
+        <td>${d.nguoiban}</td>
+        <td>${d.dai1}</td>
+        <td>${d.dai2}</td>
+        <td>${d.dai3}</td>
+        <td>${d.tong}</td>
+        <td>${d.tra1}</td>
+        <td>${d.tra2}</td>
+        <td>${d.tratong}</td>
+        <td>${d.ban}</td>
+        <td>${d.vl}</td>
+        <td>${d.vltra}</td>
+        <td>${d.ngay}</td>
+        <td>${d.ghichu}</td>
+        <td>${d.stt}</td>
+      </tr>
+    `;
+  }).join("");
+
+  document.getElementById("pvtvList").innerHTML = rows;
+
+  document.getElementById("pvtvTotalHead").innerHTML = `
+    <tr>
+      <th></th>
+      <th>TỔNG</th>
+      <th>${tongDai1}</th>
+      <th>${tongDai2}</th>
+      <th>${tongDai3}</th>
+      <th>${tongTong}</th>
+      <th>${tongTra1}</th>
+      <th>${tongTra2}</th>
+      <th>${tongTraTong}</th>
+      <th>${tongBan}</th>
+      <th>${tongVL}</th>
+      <th>${tongVLTra}</th>
+      <th colspan="3"></th>
+    </tr>
+  `;
+}
+
+loadPVTV();
 /* LOAD FUNCTIONS */
 
 async function loadDSNB(){
