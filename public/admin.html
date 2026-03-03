@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>Admin Dashboard</title>
 <style>
 body { margin:0; font-family: Arial; display:flex; }
+
 .sidebar {
   width:220px;
   height:100vh;
@@ -11,15 +13,26 @@ body { margin:0; font-family: Arial; display:flex; }
   color:white;
   padding:20px;
 }
+
 .sidebar h2 { text-align:center; }
+
 .sidebar ul { list-style:none; padding:0; }
-.sidebar li { padding:10px; cursor:pointer; }
-.sidebar li:hover { background:#34495e; }
+
+.sidebar li {
+  padding:12px;
+  cursor:pointer;
+  border-radius:5px;
+}
+
+.sidebar li:hover {
+  background:#34495e;
+}
 
 .main {
   flex:1;
   padding:30px;
   background:#ecf0f1;
+  overflow:auto;
 }
 
 .card {
@@ -28,6 +41,22 @@ body { margin:0; font-family: Arial; display:flex; }
   border-radius:8px;
   margin-bottom:20px;
 }
+
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td {
+  padding:8px;
+  border:1px solid #ccc;
+  text-align:left;
+}
+
+th {
+  background:#34495e;
+  color:white;
+}
 </style>
 </head>
 <body>
@@ -35,73 +64,115 @@ body { margin:0; font-family: Arial; display:flex; }
 <div class="sidebar">
   <h2>ADMIN</h2>
   <ul>
-    <li>Dashboard</li>
-    <li>Users</li>
-    <li>Products</li>
+    <li onclick="showTab('dashboard')">Dashboard</li>
+    <li onclick="showTab('users')">Users</li>
+    <li onclick="showTab('dsd')">DSD</li>
     <li><a href="/logout" style="color:white;text-decoration:none;">Logout</a></li>
   </ul>
 </div>
 
 <div class="main">
-  <h1>Dashboard</h1>
-<h2>Danh sách DSD</h2>
 
-<div class="card">
-  <table border="1" width="100%" cellpadding="8" style="border-collapse:collapse;">
-    <thead style="background:#34495e;color:white;">
-      <tr>
-        <th>STT</th>
-        <th>Tên</th>
-        <th>Nhóm</th>
-        <th>Vé cấp 1</th>
-        <th>Vé cấp 2</th>
-        <th>Vé tổng</th>
-        <th>Nguồn</th>
-        <th>Ngày</th>
-      </tr>
-    </thead>
-    <tbody id="dsdList"></tbody>
-  </table>
-</div>
+  <!-- DASHBOARD -->
+  <div id="dashboardTab">
+    <h1>Dashboard</h1>
+    <div class="card">
+      <p>Chào mừng bạn đến trang quản lý.</p>
+    </div>
+  </div>
 
-<script>
-async function loadDSD(){
-  try {
-    const res = await fetch("/api/dsd");
-    const data = await res.json();
+  <!-- USERS (DSNB) -->
+  <div id="usersTab" style="display:none;">
+    <h2>Danh sách người bán</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Người bán</th>
+            <th>Trạng thái</th>
+            <th>Ngày bán</th>
+            <th>Nhóm</th>
+          </tr>
+        </thead>
+        <tbody id="dsnbList"></tbody>
+      </table>
+    </div>
+  </div>
 
-    if(!Array.isArray(data)){
-      console.log(data);
-      return;
-    }
-
-    document.getElementById("dsdList").innerHTML =
-      data.map(d => `
-        <tr>
-          <td>${d.stt}</td>
-          <td>${d.ten}</td>
-          <td>${d.nhom}</td>
-          <td>${d.vecap1}</td>
-          <td>${d.vecap2}</td>
-          <td>${d.vetong}</td>
-          <td>${d.nguon}</td>
-          <td>${d.ngay}</td>
-        </tr>
-      `).join("");
-
-  } catch(err){
-    console.log("Lỗi load DSD:", err);
-  }
-}
-
-loadDSD();
-</script>
-  <div class="card">
-    <h3>Thống kê</h3>
-    <p>Chào mừng bạn đến trang quản lý.</p>
+  <!-- DSD -->
+  <div id="dsdTab" style="display:none;">
+    <h2>Danh sách DSD</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên</th>
+            <th>Nhóm</th>
+            <th>Vé cấp 1</th>
+            <th>Vé cấp 2</th>
+            <th>Vé tổng</th>
+            <th>Nguồn</th>
+            <th>Ngày</th>
+          </tr>
+        </thead>
+        <tbody id="dsdList"></tbody>
+      </table>
+    </div>
   </div>
 
 </div>
+
+<script>
+function showTab(tab){
+  document.getElementById("dashboardTab").style.display="none";
+  document.getElementById("usersTab").style.display="none";
+  document.getElementById("dsdTab").style.display="none";
+
+  document.getElementById(tab+"Tab").style.display="block";
+
+  if(tab==="users") loadDSNB();
+  if(tab==="dsd") loadDSD();
+}
+
+/* LOAD DSNB */
+async function loadDSNB(){
+  const res = await fetch("/api/dsnb");
+  const data = await res.json();
+
+  document.getElementById("dsnbList").innerHTML =
+    data.map(d => `
+      <tr>
+        <td>${d.stt}</td>
+        <td>${d.nguoiban}</td>
+        <td>${d.trangthai}</td>
+        <td>${d.ngayban}</td>
+        <td>${d.nhom}</td>
+      </tr>
+    `).join("");
+}
+
+/* LOAD DSD */
+async function loadDSD(){
+  const res = await fetch("/api/dsd");
+  const data = await res.json();
+
+  document.getElementById("dsdList").innerHTML =
+    data.map(d => `
+      <tr>
+        <td>${d.stt}</td>
+        <td>${d.ten}</td>
+        <td>${d.nhom}</td>
+        <td>${d.vecap1}</td>
+        <td>${d.vecap2}</td>
+        <td>${d.vetong}</td>
+        <td>${d.nguon}</td>
+        <td>${d.ngay}</td>
+      </tr>
+    `).join("");
+}
+</script>
 
 </body>
 </html>
