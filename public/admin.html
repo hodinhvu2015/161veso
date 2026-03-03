@@ -44,7 +44,58 @@ body { margin:0; font-family: Arial; display:flex; }
 
 <div class="main">
   <h1>Dashboard</h1>
+<h2>Danh sách DSD</h2>
 
+<div class="card">
+  <table border="1" width="100%" cellpadding="8" style="border-collapse:collapse;">
+    <thead style="background:#34495e;color:white;">
+      <tr>
+        <th>STT</th>
+        <th>Tên</th>
+        <th>Nhóm</th>
+        <th>Vé cấp 1</th>
+        <th>Vé cấp 2</th>
+        <th>Vé tổng</th>
+        <th>Nguồn</th>
+        <th>Ngày</th>
+      </tr>
+    </thead>
+    <tbody id="dsdList"></tbody>
+  </table>
+</div>
+
+<script>
+async function loadDSD(){
+  try {
+    const res = await fetch("/api/dsd");
+    const data = await res.json();
+
+    if(!Array.isArray(data)){
+      console.log(data);
+      return;
+    }
+
+    document.getElementById("dsdList").innerHTML =
+      data.map(d => `
+        <tr>
+          <td>${d.stt}</td>
+          <td>${d.ten}</td>
+          <td>${d.nhom}</td>
+          <td>${d.vecap1}</td>
+          <td>${d.vecap2}</td>
+          <td>${d.vetong}</td>
+          <td>${d.nguon}</td>
+          <td>${d.ngay}</td>
+        </tr>
+      `).join("");
+
+  } catch(err){
+    console.log("Lỗi load DSD:", err);
+  }
+}
+
+loadDSD();
+</script>
   <div class="card">
     <h3>Thống kê</h3>
     <p>Chào mừng bạn đến trang quản lý.</p>
