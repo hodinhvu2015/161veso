@@ -53,6 +53,60 @@ async function initDB() {
     Ngay VARCHAR(50)
   );
 `);
+await pool.query(`
+CREATE TABLE IF NOT EXISTS dsnb (
+  STT SERIAL PRIMARY KEY,
+  Nguoiban VARCHAR(50),
+  Trangthai VARCHAR(50),
+  Ngaynghi VARCHAR(50),
+  Ngayban VARCHAR(50),
+  Nhom VARCHAR(50),
+  Sapxep1 VARCHAR(50),
+  Vl VARCHAR(50),
+  Vecodinh VARCHAR(50)
+);
+`);
+await pool.query(`
+CREATE TABLE IF NOT EXISTS dsnv (
+  id SERIAL PRIMARY KEY,
+  ten VARCHAR(50),
+  ngay VARCHAR(50),
+  vecap1 VARCHAR(50),
+  tra VARCHAR(50),
+  ban VARCHAR(50),
+  thuctra VARCHAR(50),
+  thucban VARCHAR(50),
+  vetrung VARCHAR(50),
+  tienmat VARCHAR(50),
+  nhom VARCHAR(50),
+  vecap2 VARCHAR(50),
+  tracap2 VARCHAR(50),
+  vetong VARCHAR(50),
+  nguon VARCHAR(50),
+  tinhtrang VARCHAR(50),
+  tuan VARCHAR(50)
+);
+`);
+await pool.query(`
+CREATE TABLE IF NOT EXISTS pvtv (
+  id SERIAL PRIMARY KEY,
+  nguoiban VARCHAR(50),
+  dai1 VARCHAR(50),
+  dai2 VARCHAR(50),
+  dai3 VARCHAR(50),
+  tong VARCHAR(50),
+  tra1 VARCHAR(50),
+  tra2 VARCHAR(50),
+  tratong VARCHAR(50),
+  ban VARCHAR(50),
+  vl VARCHAR(50),
+  vltra VARCHAR(50),
+  ngay VARCHAR(50),
+  ghichu VARCHAR(50),
+  stt VARCHAR(50)
+);
+`);
+
 
     // Tạo admin mặc định nếu chưa có
     const result = await pool.query(
@@ -86,7 +140,33 @@ app.get("/api/dsd", checkAdmin, async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
-
+app.get("/api/dsnb", checkAdmin, async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM dsnb ORDER BY STT DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+app.get("/api/dsnv", checkAdmin, async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM dsnv ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+app.get("/api/pvtv", checkAdmin, async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM pvtv ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
 app.post("/api/dsd", checkAdmin, async (req, res) => {
   const { Ten, Nhom, Vecap1, Vecap2, Vetong, Nguon, Ngay } = req.body;
 

@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
+
 <style>
 body { margin:0; font-family: Arial; display:flex; }
 
 .sidebar {
-  width:220px;
+  width:230px;
   height:100vh;
   background:#2c3e50;
   color:white;
@@ -30,7 +31,7 @@ body { margin:0; font-family: Arial; display:flex; }
 
 .main {
   flex:1;
-  padding:30px;
+  padding:25px;
   background:#ecf0f1;
   overflow:auto;
 }
@@ -45,10 +46,11 @@ body { margin:0; font-family: Arial; display:flex; }
 table {
   width:100%;
   border-collapse:collapse;
+  font-size:13px;
 }
 
 th, td {
-  padding:8px;
+  padding:6px;
   border:1px solid #ccc;
   text-align:left;
 }
@@ -59,6 +61,7 @@ th {
 }
 </style>
 </head>
+
 <body>
 
 <div class="sidebar">
@@ -67,51 +70,60 @@ th {
     <li onclick="showTab('dashboard')">Dashboard</li>
     <li onclick="showTab('users')">Users</li>
     <li onclick="showTab('dsd')">DSD</li>
+    <li onclick="showTab('dsnv')">DSNV</li>
+    <li onclick="showTab('pvtv')">PVTV</li>
     <li><a href="/logout" style="color:white;text-decoration:none;">Logout</a></li>
   </ul>
 </div>
 
 <div class="main">
 
-  <!-- DASHBOARD -->
-  <div id="dashboardTab">
-    <h1>Dashboard</h1>
-    <div class="card">
-      <p>Chào mừng bạn đến trang quản lý.</p>
-    </div>
+<!-- DASHBOARD -->
+<div id="dashboardTab">
+  <h1>Dashboard</h1>
+  <div class="card">
+    <p>Chào mừng bạn đến trang quản lý.</p>
   </div>
+</div>
 
-  <!-- USERS (DSNB) -->
-  <div id="usersTab" style="display:none;">
-    <h2>Danh sách người bán</h2>
-    <div class="card">
+<!-- USERS (DSNB) -->
+<div id="usersTab" style="display:none;">
+  <h2>Danh sách người bán</h2>
+  <div class="card">
+    <div style="overflow:auto;">
       <table>
         <thead>
           <tr>
             <th>STT</th>
             <th>Người bán</th>
             <th>Trạng thái</th>
+            <th>Ngày nghỉ</th>
             <th>Ngày bán</th>
             <th>Nhóm</th>
+            <th>Sắp xếp</th>
+            <th>VL</th>
+            <th>Vé cố định</th>
           </tr>
         </thead>
         <tbody id="dsnbList"></tbody>
       </table>
     </div>
   </div>
+</div>
 
-  <!-- DSD -->
-  <div id="dsdTab" style="display:none;">
-    <h2>Danh sách DSD</h2>
-    <div class="card">
+<!-- DSD -->
+<div id="dsdTab" style="display:none;">
+  <h2>Danh sách DSD</h2>
+  <div class="card">
+    <div style="overflow:auto;">
       <table>
         <thead>
           <tr>
             <th>STT</th>
             <th>Tên</th>
             <th>Nhóm</th>
-            <th>Vé cấp 1</th>
-            <th>Vé cấp 2</th>
+            <th>Vé C1</th>
+            <th>Vé C2</th>
             <th>Vé tổng</th>
             <th>Nguồn</th>
             <th>Ngày</th>
@@ -121,45 +133,111 @@ th {
       </table>
     </div>
   </div>
+</div>
+
+<!-- DSNV -->
+<div id="dsnvTab" style="display:none;">
+  <h2>Danh sách DSNV</h2>
+  <div class="card">
+    <div style="overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Ngày</th>
+            <th>Vé C1</th>
+            <th>Trả</th>
+            <th>Bán</th>
+            <th>Thực trả</th>
+            <th>Thực bán</th>
+            <th>Vé trúng</th>
+            <th>Tiền mặt</th>
+            <th>Nhóm</th>
+            <th>Vé C2</th>
+            <th>Trả C2</th>
+            <th>Vé tổng</th>
+            <th>Nguồn</th>
+            <th>Tình trạng</th>
+            <th>Tuần</th>
+          </tr>
+        </thead>
+        <tbody id="dsnvList"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PVTV -->
+<div id="pvtvTab" style="display:none;">
+  <h2>Danh sách PVTV</h2>
+  <div class="card">
+    <div style="overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Người bán</th>
+            <th>Đài1</th>
+            <th>Đài2</th>
+            <th>Đài3</th>
+            <th>Tổng</th>
+            <th>Trả1</th>
+            <th>Trả2</th>
+            <th>Trả tổng</th>
+            <th>Bán</th>
+            <th>VL</th>
+            <th>VL Trả</th>
+            <th>Ngày</th>
+            <th>Ghi chú</th>
+            <th>STT</th>
+          </tr>
+        </thead>
+        <tbody id="pvtvList"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 </div>
 
 <script>
 function showTab(tab){
-  document.getElementById("dashboardTab").style.display="none";
-  document.getElementById("usersTab").style.display="none";
-  document.getElementById("dsdTab").style.display="none";
-
+  document.querySelectorAll(".main > div").forEach(div => div.style.display="none");
   document.getElementById(tab+"Tab").style.display="block";
 
   if(tab==="users") loadDSNB();
   if(tab==="dsd") loadDSD();
+  if(tab==="dsnv") loadDSNV();
+  if(tab==="pvtv") loadPVTV();
 }
 
-/* LOAD DSNB */
+/* LOAD FUNCTIONS */
+
 async function loadDSNB(){
   const res = await fetch("/api/dsnb");
   const data = await res.json();
-
   document.getElementById("dsnbList").innerHTML =
-    data.map(d => `
+    data.map(d=>`
       <tr>
         <td>${d.stt}</td>
         <td>${d.nguoiban}</td>
         <td>${d.trangthai}</td>
+        <td>${d.ngaynghi||""}</td>
         <td>${d.ngayban}</td>
         <td>${d.nhom}</td>
+        <td>${d.sapxep1}</td>
+        <td>${d.vl}</td>
+        <td>${d.vecodinh}</td>
       </tr>
     `).join("");
 }
 
-/* LOAD DSD */
 async function loadDSD(){
   const res = await fetch("/api/dsd");
   const data = await res.json();
-
   document.getElementById("dsdList").innerHTML =
-    data.map(d => `
+    data.map(d=>`
       <tr>
         <td>${d.stt}</td>
         <td>${d.ten}</td>
@@ -169,6 +247,58 @@ async function loadDSD(){
         <td>${d.vetong}</td>
         <td>${d.nguon}</td>
         <td>${d.ngay}</td>
+      </tr>
+    `).join("");
+}
+
+async function loadDSNV(){
+  const res = await fetch("/api/dsnv");
+  const data = await res.json();
+  document.getElementById("dsnvList").innerHTML =
+    data.map(d=>`
+      <tr>
+        <td>${d.id}</td>
+        <td>${d.ten}</td>
+        <td>${d.ngay}</td>
+        <td>${d.vecap1}</td>
+        <td>${d.tra}</td>
+        <td>${d.ban}</td>
+        <td>${d.thuctra}</td>
+        <td>${d.thucban}</td>
+        <td>${d.vetrung}</td>
+        <td>${d.tienmat}</td>
+        <td>${d.nhom}</td>
+        <td>${d.vecap2}</td>
+        <td>${d.tracap2}</td>
+        <td>${d.vetong}</td>
+        <td>${d.nguon}</td>
+        <td>${d.tinhtrang}</td>
+        <td>${d.tuan}</td>
+      </tr>
+    `).join("");
+}
+
+async function loadPVTV(){
+  const res = await fetch("/api/pvtv");
+  const data = await res.json();
+  document.getElementById("pvtvList").innerHTML =
+    data.map(d=>`
+      <tr>
+        <td>${d.id}</td>
+        <td>${d.nguoiban}</td>
+        <td>${d.dai1}</td>
+        <td>${d.dai2}</td>
+        <td>${d.dai3}</td>
+        <td>${d.tong}</td>
+        <td>${d.tra1}</td>
+        <td>${d.tra2}</td>
+        <td>${d.tratong}</td>
+        <td>${d.ban}</td>
+        <td>${d.vl}</td>
+        <td>${d.vltra}</td>
+        <td>${d.ngay}</td>
+        <td>${d.ghichu}</td>
+        <td>${d.stt}</td>
       </tr>
     `).join("");
 }
