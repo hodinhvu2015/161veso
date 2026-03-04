@@ -224,6 +224,9 @@ tr:hover{
       <input type="text" id="newNguoiBan" placeholder="Tên người bán">
       <input type="text" id="newNhom" placeholder="Nhóm">
       <button class="add-btn" onclick="addDSNB()">➕ Thêm</button>
+	  <button onclick="toggleSort('trangthai')">🔄 Sort Trạng thái</button>
+		<button onclick="toggleSort('nhom')">🔄 Sort Nhóm</button>
+		<button onclick="startVoiceInput()">🎤 Nhập bằng giọng nói</button>
       <span id="tongDangBan"></span>
     </div>
 
@@ -455,7 +458,14 @@ async function loadDSNB(){
 
   let tongDangBan = 0;
 
-  const rows = data.map(d => {
+  if(currentSort){
+  data.sort((a,b)=>{
+    return (a[currentSort] || "")
+      .localeCompare(b[currentSort] || "", 'vi');
+  });
+}
+
+const rows = data.map(d => {
 
     if(d.trangthai === "Bán") tongDangBan++;
 
@@ -475,10 +485,7 @@ async function loadDSNB(){
     <option value="Bán" ${d.trangthai==="Bán"?"selected":""}>Bán</option>
     <option value="Nghỉ" ${d.trangthai==="Nghỉ"?"selected":""}>Nghỉ</option>
   </select>
-  <br>
-  <span class="${d.trangthai==='Bán'?'badge-ban':'badge-nghi'}">
-    ${d.trangthai}
-  </span>
+  
 </td>
 
         <td>
@@ -590,7 +597,7 @@ async function addDSNB(){
 
   document.getElementById("newNguoiBan").value="";
   document.getElementById("newNhom").value="";
-
+let currentSort = null;
   loadDSNB();
 }
 function formatDateInput(dateStr){
@@ -637,10 +644,54 @@ async function saveDSNB(id){
       ngayban
     })
   });
-
+  let currentSort = null;
   loadDSNB();
 }
+function toggleSort(field){
+  if(currentSort === field){
+    currentSort = null; // click lần 2 → bỏ sort
+  } else {
+    currentSort = field; // bật sort
+  }
+  loadDSNB();
+}
+function startVoiceInput(){
 
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Trình duyệt không hỗ trợ giọng nói (dùng Chrome)");
+    return;
+  }
+
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "vi-VN";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.start();
+
+  recognition.onresult = function(event){
+    const text = event.results[0][0].transcript.toLowerCase();
+    console.log("Voice:", text);
+
+    // Điền tên
+    document.getElementById("newNguoiBan").value = text;
+
+    // Tự nhận diện nhóm
+    const matchNhom = text.match(/nhóm\s*(\d+)/);
+    if(matchNhom){
+      document.getElementById("newNhom").value = matchNhom[1];
+    }
+
+    // Nếu nói "nghỉ"
+    if(text.includes("nghỉ")){
+      alert("Đã nhận trạng thái: Nghỉ (sẽ chỉnh sau khi thêm)");
+    }
+  };
+
+  recognition.onerror = function(event){
+    alert("Lỗi nhận giọng nói");
+  };
+}
 </script>
 
 </body>
