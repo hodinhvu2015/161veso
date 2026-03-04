@@ -163,24 +163,50 @@ thead:nth-of-type(2) th{
   <div class="card">
     <div style="overflow:auto;">
       <table>
-        <thead>
-          <tr>
-            <th>STT</th>
-            <th>Tên</th>
-            <th>Nhóm</th>
-            <th>Vé C1</th>
-            <th>Vé C2</th>
-            <th>Vé tổng</th>
-            <th>Nguồn</th>
-            <th>Ngày</th>
-          </tr>
-        </thead>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Người bán</th>
+    <th>Trạng thái</th>
+    <th>Ngày nghỉ</th>
+    <th>Ngày bán</th>
+    <th>Nhóm</th>
+    <th>Sắp xếp</th>
+    <th>VL</th>
+    <th>Vé cố định</th>
+    <th>Hành động</th>
+  </tr>
+</thead>
         <tbody id="dsdList"></tbody>
       </table>
     </div>
   </div>
 </div>
+<div class="card" id="dsnbTab" style="display:none;">
+  <h2>Danh sách người bán (DSNB)</h2>
 
+  <!-- FORM THÊM -->
+  <div style="margin-bottom:15px;">
+    <input type="text" id="newNguoiBan" placeholder="Tên người bán">
+    <input type="text" id="newNhom" placeholder="Nhóm">
+    <button onclick="addDSNB()">➕ Thêm</button>
+  </div>
+
+  <div style="overflow:auto; max-height:600px;">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Người bán</th>
+          <th>Trạng thái</th>
+          <th>Nhóm</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="dsnbList"></tbody>
+    </table>
+  </div>
+</div>
 <!-- DSNV -->
 <div id="dsnvTab" style="display:none;">
   <h2>Danh sách DSNV</h2>
@@ -265,6 +291,69 @@ thead:nth-of-type(2) th{
 </div>
 
 <script>
+async function loadDSNB(){
+
+  const res = await fetch("/api/dsnb");
+  const data = await res.json();
+
+  let tongDangBan = 0;
+
+  const rows = data.map(d => {
+
+    if(d.trangthai === "Bán") tongDangBan++;
+
+    return `
+      <tr style="${d.trangthai === 'Nghỉ' ? 'background:#ffe6e6;' : ''}">
+        <td>${d.id}</td>
+
+        <td>
+          <input value="${d.nguoiban || ''}" id="ten_${d.id}">
+        </td>
+
+        <td>
+          <select id="trangthai_${d.id}">
+            <option value="Bán" ${d.trangthai==="Bán"?"selected":""}>Bán</option>
+            <option value="Nghỉ" ${d.trangthai==="Nghỉ"?"selected":""}>Nghỉ</option>
+          </select>
+        </td>
+
+        <td>
+          <input type="date" value="${formatDateInput(d.ngaynghi)}" id="ngaynghi_${d.id}">
+        </td>
+
+        <td>
+          <input type="date" value="${formatDateInput(d.ngayban)}" id="ngayban_${d.id}">
+        </td>
+
+        <td>
+          <input value="${d.nhom || ''}" id="nhom_${d.id}">
+        </td>
+
+        <td>
+          <input value="${d.sapxep1 || ''}" id="sapxep_${d.id}">
+        </td>
+
+        <td>
+          <input value="${d.vl || ''}" id="vl_${d.id}" style="width:70px;">
+        </td>
+
+        <td>
+          <input value="${d.vecodinh || ''}" id="vecodinh_${d.id}" style="width:90px;">
+        </td>
+
+        <td>
+          <button onclick="saveDSNB(${d.id})">💾</button>
+          <button onclick="deleteDSNB(${d.id})" style="background:red;color:white;">Xoá</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  document.getElementById("dsnbList").innerHTML = rows;
+
+  document.getElementById("tongDangBan").innerHTML =
+    "📊 Tổng người đang bán: " + tongDangBan;
+}
 function showTab(tab){
   document.querySelectorAll(".main > div").forEach(div => div.style.display="none");
   document.getElementById(tab+"Tab").style.display="block";
@@ -418,7 +507,75 @@ async function loadDSNV(){
       </tr>
     `).join("");
 }
+async function saveDSNB(id){
 
+  const nguoiban = document.getElementById("ten_"+id).value;
+  const nhom = document.getElementById("nhom_"+id).value;
+  const vl = document.getElementById("vl_"+id).value;
+  const vecodinh = document.getElementById("vecodinh_"+id).value;
+  const trangthai = document.getElementById("trangthai_"+id).value;
+
+  await fetch("/api/dsnb/" + id + "/full", {
+    method:"PUT",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      nguoiban,
+      nhom,
+      vl,
+      vecodinh,
+      trangthai
+    })
+  });
+
+  loadDSNB();
+}
+function formatDateInput(dateStr){
+  if(!dateStr) return "";
+
+  const parts = dateStr.split("-");
+  if(parts.length !== 3) return "";
+
+  return parts[2] + "-" + parts[1] + "-" + parts[0];
+}
+async function saveDSNB(id){
+
+  const nguoiban = document.getElementById("ten_"+id).value;
+  const trangthai = document.getElementById("trangthai_"+id).value;
+  const nhom = document.getElementById("nhom_"+id).value;
+  const sapxep1 = document.getElementById("sapxep_"+id).value;
+  const vl = document.getElementById("vl_"+id).value;
+  const vecodinh = document.getElementById("vecodinh_"+id).value;
+
+  let ngaynghi = document.getElementById("ngaynghi_"+id).value;
+  let ngayban = document.getElementById("ngayban_"+id).value;
+
+  if(ngaynghi){
+    const p = ngaynghi.split("-");
+    ngaynghi = p[2] + "-" + p[1] + "-" + p[0];
+  }
+
+  if(ngayban){
+    const p = ngayban.split("-");
+    ngayban = p[2] + "-" + p[1] + "-" + p[0];
+  }
+
+  await fetch("/api/dsnb/" + id + "/full", {
+    method:"PUT",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      nguoiban,
+      trangthai,
+      nhom,
+      sapxep1,
+      vl,
+      vecodinh,
+      ngaynghi,
+      ngayban
+    })
+  });
+
+  loadDSNB();
+}
 async function loadPVTV(){
   const res = await fetch("/api/pvtv");
   const data = await res.json();

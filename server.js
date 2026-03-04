@@ -167,6 +167,59 @@ app.get("/api/pvtv", checkAdmin, async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+app.get("/api/dsnb", async (req, res) => {
+  const result = await pool.query("SELECT * FROM dsnb ORDER BY id DESC");
+  res.json(result.rows);
+});
+app.post("/api/dsnb", async (req, res) => {
+  const { nguoiban, nhom } = req.body;
+
+  await pool.query(
+    "INSERT INTO dsnb (nguoiban, trangthai, nhom) VALUES ($1, 'Bán', $2)",
+    [nguoiban, nhom]
+  );
+
+  res.json({ success: true });
+});
+app.put("/api/dsnb/:id", async (req, res) => {
+  const { trangthai } = req.body;
+
+  await pool.query(
+    "UPDATE dsnb SET trangthai = $1 WHERE id = $2",
+    [trangthai, req.params.id]
+  );
+
+  res.json({ success: true });
+});
+app.put("/api/dsnb/:id/full", async (req, res) => {
+
+  const {
+    nguoiban,
+    trangthai,
+    nhom,
+    sapxep1,
+    vl,
+    vecodinh,
+    ngaynghi,
+    ngayban
+  } = req.body;
+
+  await pool.query(
+    `UPDATE dsnb 
+     SET nguoiban=$1,
+         trangthai=$2,
+         nhom=$3,
+         sapxep1=$4,
+         vl=$5,
+         vecodinh=$6,
+         ngaynghi=$7,
+         ngayban=$8
+     WHERE id=$9`,
+    [nguoiban, trangthai, nhom, sapxep1, vl, vecodinh, ngaynghi, ngayban, req.params.id]
+  );
+
+  res.json({ success:true });
+});
 app.post("/api/dsd", checkAdmin, async (req, res) => {
   const { Ten, Nhom, Vecap1, Vecap2, Vetong, Nguon, Ngay } = req.body;
 
