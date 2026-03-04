@@ -450,7 +450,7 @@ async function loadPVTV(){
 
 loadPVTV();
 /* LOAD FUNCTIONS */
-
+let currentSort = null;
 async function loadDSNB(){
 
   const res = await fetch("/api/dsnb");
@@ -597,7 +597,7 @@ async function addDSNB(){
 
   document.getElementById("newNguoiBan").value="";
   document.getElementById("newNhom").value="";
-let currentSort = null;
+
   loadDSNB();
 }
 function formatDateInput(dateStr){
@@ -644,7 +644,7 @@ async function saveDSNB(id){
       ngayban
     })
   });
-  let currentSort = null;
+  
   loadDSNB();
 }
 function toggleSort(field){
