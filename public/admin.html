@@ -104,7 +104,88 @@ thead:nth-of-type(2) th{
   top: 0;
   z-index: 10;
 }
+/* CARD STYLE */
+.card-box{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom:20px;
+}
 
+/* INPUT & BUTTON */
+input, select{
+  padding:6px 8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+button{
+  padding:6px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+/* ADD BUTTON */
+.add-btn{
+  background:#27ae60;
+  color:white;
+}
+
+.add-btn:hover{
+  background:#219150;
+}
+
+/* STATUS BADGE */
+.badge-ban{
+  background:#2ecc71;
+  color:white;
+  padding:4px 8px;
+  border-radius:12px;
+  font-size:12px;
+}
+
+.badge-nghi{
+  background:#e74c3c;
+  color:white;
+  padding:4px 8px;
+  border-radius:12px;
+  font-size:12px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:#2c3e50;
+  color:white;
+}
+
+tr:hover{
+  background:#f2f2f2;
+}
+
+/* NGHỈ highlight */
+.row-nghi{
+  background:#ffe6e6 !important;
+}
+
+/* TOTAL */
+#tongDangBan{
+  font-size:16px;
+  color:#e67e22;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -135,19 +216,18 @@ thead:nth-of-type(2) th{
 <!-- USERS (DSNB) -->
 <div id="usersTab" style="display:none;">
 
-  <h2>Danh sách người bán</h2>
+  <h2>👥 Danh sách người bán</h2>
 
-  <div style="margin-bottom:15px;">
-    <input type="text" id="newNguoiBan" placeholder="Tên người bán">
-    <input type="text" id="newNhom" placeholder="Nhóm">
-    <button onclick="addDSNB()">➕ Thêm</button>
+  <div class="card-box">
 
-    <span id="tongDangBan"
-          style="margin-left:20px;font-weight:bold;color:#e67e22;">
-    </span>
-  </div>
+    <div style="margin-bottom:15px;">
+      <input type="text" id="newNguoiBan" placeholder="Tên người bán">
+      <input type="text" id="newNhom" placeholder="Nhóm">
+      <button class="add-btn" onclick="addDSNB()">➕ Thêm</button>
+      <span id="tongDangBan"></span>
+    </div>
 
-  <div style="overflow:auto; max-height:600px;">
+    <div style="overflow:auto; max-height:600px;">
     <table>
       <thead>
         <tr>
@@ -388,7 +468,7 @@ async function loadDSNB(){
     if(d.trangthai === "Bán") tongDangBan++;
 
     return `
-      <tr style="${d.trangthai === 'Nghỉ' ? 'background:#ffe6e6;' : ''}">
+      <tr class="${d.trangthai==='Nghỉ'?'row-nghi':''}">
         <td>${d.stt}</td>
 
         <td>
@@ -398,12 +478,16 @@ async function loadDSNB(){
         </td>
 
         <td>
-          <select onchange="saveDSNB(${d.stt})"
-                  id="trangthai_${d.stt}">
-            <option value="Bán" ${d.trangthai==="Bán"?"selected":""}>Bán</option>
-            <option value="Nghỉ" ${d.trangthai==="Nghỉ"?"selected":""}>Nghỉ</option>
-          </select>
-        </td>
+  <select onchange="saveDSNB(${d.stt})"
+          id="trangthai_${d.stt}">
+    <option value="Bán" ${d.trangthai==="Bán"?"selected":""}>Bán</option>
+    <option value="Nghỉ" ${d.trangthai==="Nghỉ"?"selected":""}>Nghỉ</option>
+  </select>
+  <br>
+  <span class="${d.trangthai==='Bán'?'badge-ban':'badge-nghi'}">
+    ${d.trangthai}
+  </span>
+</td>
 
         <td>
           <input type="date"
