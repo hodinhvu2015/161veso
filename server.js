@@ -167,10 +167,7 @@ app.get("/api/pvtv", checkAdmin, async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
-app.get("/api/dsnb", async (req, res) => {
-  const result = await pool.query("SELECT * FROM dsnb ORDER BY id DESC");
-  res.json(result.rows);
-});
+
 app.post("/api/dsnb", async (req, res) => {
   const { nguoiban, nhom } = req.body;
 
@@ -181,11 +178,11 @@ app.post("/api/dsnb", async (req, res) => {
 
   res.json({ success: true });
 });
-app.put("/api/dsnb/:id", async (req, res) => {
+app.put("/api/dsnb/:id", checkAdmin, async (req, res) => {
   const { trangthai } = req.body;
 
   await pool.query(
-    "UPDATE dsnb SET trangthai = $1 WHERE id = $2",
+    "UPDATE dsnb SET trangthai = $1 WHERE STT = $2",
     [trangthai, req.params.id]
   );
 
@@ -214,7 +211,7 @@ app.put("/api/dsnb/:id/full", async (req, res) => {
          vecodinh=$6,
          ngaynghi=$7,
          ngayban=$8
-     WHERE id=$9`,
+     WHERE stt=$9`,
     [nguoiban, trangthai, nhom, sapxep1, vl, vecodinh, ngaynghi, ngayban, req.params.id]
   );
 

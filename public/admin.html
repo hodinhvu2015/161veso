@@ -182,31 +182,7 @@ thead:nth-of-type(2) th{
     </div>
   </div>
 </div>
-<div class="card" id="dsnbTab" style="display:none;">
-  <h2>Danh sách người bán (DSNB)</h2>
 
-  <!-- FORM THÊM -->
-  <div style="margin-bottom:15px;">
-    <input type="text" id="newNguoiBan" placeholder="Tên người bán">
-    <input type="text" id="newNhom" placeholder="Nhóm">
-    <button onclick="addDSNB()">➕ Thêm</button>
-  </div>
-
-  <div style="overflow:auto; max-height:600px;">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Người bán</th>
-          <th>Trạng thái</th>
-          <th>Nhóm</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody id="dsnbList"></tbody>
-    </table>
-  </div>
-</div>
 <!-- DSNV -->
 <div id="dsnvTab" style="display:none;">
   <h2>Danh sách DSNV</h2>
@@ -291,69 +267,7 @@ thead:nth-of-type(2) th{
 </div>
 
 <script>
-async function loadDSNB(){
 
-  const res = await fetch("/api/dsnb");
-  const data = await res.json();
-
-  let tongDangBan = 0;
-
-  const rows = data.map(d => {
-
-    if(d.trangthai === "Bán") tongDangBan++;
-
-    return `
-      <tr style="${d.trangthai === 'Nghỉ' ? 'background:#ffe6e6;' : ''}">
-        <td>${d.id}</td>
-
-        <td>
-          <input value="${d.nguoiban || ''}" id="ten_${d.id}">
-        </td>
-
-        <td>
-          <select id="trangthai_${d.id}">
-            <option value="Bán" ${d.trangthai==="Bán"?"selected":""}>Bán</option>
-            <option value="Nghỉ" ${d.trangthai==="Nghỉ"?"selected":""}>Nghỉ</option>
-          </select>
-        </td>
-
-        <td>
-          <input type="date" value="${formatDateInput(d.ngaynghi)}" id="ngaynghi_${d.id}">
-        </td>
-
-        <td>
-          <input type="date" value="${formatDateInput(d.ngayban)}" id="ngayban_${d.id}">
-        </td>
-
-        <td>
-          <input value="${d.nhom || ''}" id="nhom_${d.id}">
-        </td>
-
-        <td>
-          <input value="${d.sapxep1 || ''}" id="sapxep_${d.id}">
-        </td>
-
-        <td>
-          <input value="${d.vl || ''}" id="vl_${d.id}" style="width:70px;">
-        </td>
-
-        <td>
-          <input value="${d.vecodinh || ''}" id="vecodinh_${d.id}" style="width:90px;">
-        </td>
-
-        <td>
-          <button onclick="saveDSNB(${d.id})">💾</button>
-          <button onclick="deleteDSNB(${d.id})" style="background:red;color:white;">Xoá</button>
-        </td>
-      </tr>
-    `;
-  }).join("");
-
-  document.getElementById("dsnbList").innerHTML = rows;
-
-  document.getElementById("tongDangBan").innerHTML =
-    "📊 Tổng người đang bán: " + tongDangBan;
-}
 function showTab(tab){
   document.querySelectorAll(".main > div").forEach(div => div.style.display="none");
   document.getElementById(tab+"Tab").style.display="block";
@@ -401,7 +315,7 @@ async function loadPVTV(){
 
     return `
       <tr>
-        <td>${d.id}</td>
+        <td>${d.stt}</td>
         <td>${d.nguoiban}</td>
         <td>${d.dai1}</td>
         <td>${d.dai2}</td>
@@ -487,7 +401,7 @@ async function loadDSNV(){
   document.getElementById("dsnvList").innerHTML =
     data.map(d=>`
       <tr>
-        <td>${d.id}</td>
+        <td>${d.stt}</td>
         <td>${d.ten}</td>
         <td>${d.ngay}</td>
         <td>${d.vecap1}</td>
@@ -507,28 +421,7 @@ async function loadDSNV(){
       </tr>
     `).join("");
 }
-async function saveDSNB(id){
 
-  const nguoiban = document.getElementById("ten_"+id).value;
-  const nhom = document.getElementById("nhom_"+id).value;
-  const vl = document.getElementById("vl_"+id).value;
-  const vecodinh = document.getElementById("vecodinh_"+id).value;
-  const trangthai = document.getElementById("trangthai_"+id).value;
-
-  await fetch("/api/dsnb/" + id + "/full", {
-    method:"PUT",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      nguoiban,
-      nhom,
-      vl,
-      vecodinh,
-      trangthai
-    })
-  });
-
-  loadDSNB();
-}
 function formatDateInput(dateStr){
   if(!dateStr) return "";
 
@@ -576,30 +469,7 @@ async function saveDSNB(id){
 
   loadDSNB();
 }
-async function loadPVTV(){
-  const res = await fetch("/api/pvtv");
-  const data = await res.json();
-  document.getElementById("pvtvList").innerHTML =
-    data.map(d=>`
-      <tr>
-        <td>${d.id}</td>
-        <td>${d.nguoiban}</td>
-        <td>${d.dai1}</td>
-        <td>${d.dai2}</td>
-        <td>${d.dai3}</td>
-        <td>${d.tong}</td>
-        <td>${d.tra1}</td>
-        <td>${d.tra2}</td>
-        <td>${d.tratong}</td>
-        <td>${d.ban}</td>
-        <td>${d.vl}</td>
-        <td>${d.vltra}</td>
-        <td>${d.ngay}</td>
-        <td>${d.ghichu}</td>
-        <td>${d.stt}</td>
-      </tr>
-    `).join("");
-}
+
 </script>
 
 </body>
