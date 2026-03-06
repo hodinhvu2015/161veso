@@ -217,7 +217,7 @@ tr:hover{
 <div id="usersTab" style="display:none;">
 
   <h2>👥 Danh sách người bán</h2>
-
+<div id="tongDangBan">📊 Tổng người đang bán: 0</div>
   <div class="card-box">
 
     <div style="margin-bottom:15px;">
@@ -692,7 +692,7 @@ function startVoiceInput(){
     const text = event.results[0][0].transcript.toLowerCase();
     console.log("Voice nhận được:", text);
 
-    document.getElementById("voiceText").value = text;
+    document.getElementById("quickVoice").value = text;
     parseQuickInput();
   };
 
