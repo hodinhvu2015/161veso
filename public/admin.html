@@ -705,23 +705,7 @@ function startVoiceInput(){
     console.log("Kết thúc nhận giọng nói");
   };
 }
-function tachChuoi(){
 
-  let text = document.getElementById("voiceText").value.trim();
-
-  if(!text.includes("e")) return;
-
-  let parts = text.split("e");
-
-  let ten = parts[0].trim();
-  let nhom = parts[1].trim();
-
-  document.getElementById("textNguoiBan").value = ten;
-  document.getElementById("textNhom").value = nhom;
-
-  // trạng thái mặc định
-  document.getElementById("textTrangThai").value = "Bán";
-}
 
 function parseQuickInput(){
 
@@ -729,26 +713,26 @@ function parseQuickInput(){
 
   if(!text) return;
 
-  // tách theo chữ e
-  let parts = text.split(/\s+e\s+/i);
+  // tìm chữ e phân cách
+  let match = text.match(/(.+?)\s*e\s*(\d+)/i);
 
-  if(parts.length < 2){
+  if(!match){
     alert("Sai định dạng. Ví dụ: Nguyễn Văn A e 5");
     return;
   }
 
-  let ten = parts[0].trim();
-  let nhom = parts[1].trim();
+  let ten = match[1].trim();
+  let nhom = match[2].trim();
 
   // điền vào form
   document.getElementById("newNguoiBan").value = ten;
   document.getElementById("newNhom").value = nhom;
 
-  // trạng thái mặc định
-  document.getElementById("newTrangThai").value = "Bán";
-
-  // xóa ô nhập nhanh
+  // xóa ô voice
   document.getElementById("quickVoice").value = "";
+
+  // focus vào nút thêm
+  document.getElementById("addDSNB").focus();
 }
 </script>
 
