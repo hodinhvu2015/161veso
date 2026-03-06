@@ -227,6 +227,18 @@ tr:hover{
 	  <button onclick="toggleSort('trangthai')">🔄 Sort Trạng thái</button>
 		<button onclick="toggleSort('nhom')">🔄 Sort Nhóm</button>
 		<button onclick="startVoiceInput()">🎤 Nhập bằng giọng nói</button>
+		<div style="margin-bottom:10px;">
+  <div style="margin-bottom:10px;">
+  <input
+    id="quickVoice"
+    type="text"
+    placeholder='🎤 Ví dụ: Nguyễn Văn A e 5'
+    style="width:100%;padding:8px;font-size:14px;"
+    onkeydown="if(event.key==='Enter') parseQuickInput()"
+  >
+</div>
+
+<button onclick="parseQuickInput()">Thêm nhanh</button>
       <span id="tongDangBan"></span>
     </div>
 
@@ -657,40 +669,72 @@ function toggleSort(field){
 }
 function startVoiceInput(){
 
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Trình duyệt không hỗ trợ giọng nói (dùng Chrome)");
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Trình duyệt không hỗ trợ nhận giọng nói. Hãy dùng Chrome.");
     return;
   }
 
-  const recognition = new webkitSpeechRecognition();
+  const recognition = new SpeechRecognition();
+
   recognition.lang = "vi-VN";
   recognition.continuous = false;
   recognition.interimResults = false;
 
   recognition.start();
 
+  recognition.onstart = function(){
+    alert("🎤 Đang nghe... Hãy nói tên người bán");
+  };
+
   recognition.onresult = function(event){
     const text = event.results[0][0].transcript.toLowerCase();
-    console.log("Voice:", text);
+    console.log("Voice nhận được:", text);
 
-    // Điền tên
     document.getElementById("newNguoiBan").value = text;
 
-    // Tự nhận diện nhóm
     const matchNhom = text.match(/nhóm\s*(\d+)/);
     if(matchNhom){
       document.getElementById("newNhom").value = matchNhom[1];
     }
-
-    // Nếu nói "nghỉ"
-    if(text.includes("nghỉ")){
-      alert("Đã nhận trạng thái: Nghỉ (sẽ chỉnh sau khi thêm)");
-    }
   };
 
   recognition.onerror = function(event){
-    alert("Lỗi nhận giọng nói");
+    console.error("Voice error:", event.error);
+    alert("Lỗi giọng nói: " + event.error);
   };
+
+  recognition.onend = function(){
+    console.log("Kết thúc nhận giọng nói");
+  };
+}
+function parseQuickInput(){
+
+  let text = document.getElementById("quickVoice").value.trim();
+
+  if(!text) return;
+
+  // tách theo chữ e
+  let parts = text.split(/\s+e\s+/i);
+
+  if(parts.length < 2){
+    alert("Sai định dạng. Ví dụ: Nguyễn Văn A e 5");
+    return;
+  }
+
+  let ten = parts[0].trim();
+  let nhom = parts[1].trim();
+
+  // điền vào form
+  document.getElementById("newNguoiBan").value = ten;
+  document.getElementById("newNhom").value = nhom;
+
+  // trạng thái mặc định
+  document.getElementById("newTrangThai").value = "Bán";
+
+  // xóa ô nhập nhanh
+  document.getElementById("quickVoice").value = "";
 }
 </script>
 
