@@ -693,7 +693,7 @@ function startVoiceInput(){
     console.log("Voice nhận được:", text);
 
     document.getElementById("voiceText").value = text;
-    tachChuoi();
+    parseQuickInput();
   };
 
   recognition.onerror = function(event){
