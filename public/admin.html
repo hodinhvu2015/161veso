@@ -692,12 +692,8 @@ function startVoiceInput(){
     const text = event.results[0][0].transcript.toLowerCase();
     console.log("Voice nhận được:", text);
 
-    document.getElementById("newNguoiBan").value = text;
-
-    const matchNhom = text.match(/nhóm\s*(\d+)/);
-    if(matchNhom){
-      document.getElementById("newNhom").value = matchNhom[1];
-    }
+    document.getElementById("voiceText").value = text;
+    tachChuoi();
   };
 
   recognition.onerror = function(event){
@@ -709,6 +705,24 @@ function startVoiceInput(){
     console.log("Kết thúc nhận giọng nói");
   };
 }
+function tachChuoi(){
+
+  let text = document.getElementById("voiceText").value.trim();
+
+  if(!text.includes("e")) return;
+
+  let parts = text.split("e");
+
+  let ten = parts[0].trim();
+  let nhom = parts[1].trim();
+
+  document.getElementById("textNguoiBan").value = ten;
+  document.getElementById("textNhom").value = nhom;
+
+  // trạng thái mặc định
+  document.getElementById("textTrangThai").value = "Bán";
+}
+
 function parseQuickInput(){
 
   let text = document.getElementById("quickVoice").value.trim();
