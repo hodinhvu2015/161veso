@@ -223,7 +223,7 @@ tr:hover{
     <div style="margin-bottom:15px;">
       <input type="text" id="newNguoiBan" placeholder="Tên người bán">
       <input type="text" id="newNhom" placeholder="Nhóm">
-      <button class="add-btn" onclick="addDSNB()">➕ Thêm</button>
+      <button class="add-btn" id="btnThem" onclick="addDSNB()">➕ Thêm</button>
 	  <button onclick="toggleSort('trangthai')">🔄 Sort Trạng thái</button>
 		<button onclick="toggleSort('nhom')">🔄 Sort Nhóm</button>
 	
@@ -732,7 +732,7 @@ function parseQuickInput(){
   document.getElementById("quickVoice").value = "";
 
   // focus vào nút thêm
-  document.getElementById("addDSNB").focus();
+  document.getElementById("btnThem").focus();
 }
 </script>
 
