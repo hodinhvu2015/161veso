@@ -234,12 +234,11 @@ tr:hover{
     type="text"
     placeholder='🎤 Ví dụ: Nguyễn Văn A e 5'
     style="width:100%;padding:8px;font-size:14px;"
-    onkeydown="if(event.key==='Enter') parseQuickInput()"
+    onkeydown="if(event.key==='Enter') startVoiceInput()"
   >
 
+<button onclick="startVoiceInput()">🎤 Nhập bằng giọng nói</button>
 
-<button onclick="parseQuickInput()">Thêm nhanh</button>
-      <span id="tongDangBan"></span>
     </div>
 
     <div style="overflow:auto; max-height:600px;">
@@ -261,6 +260,7 @@ tr:hover{
     </table>
   </div>
 
+</div>
 </div>
 </div>
 <!-- DSD -->
