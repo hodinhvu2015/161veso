@@ -492,7 +492,7 @@ async function loadDSNB(){
 const rows = data.map(d => {
 
     if(d.trangthai === "Bán") tongDangBan++;
-		<tr class="${d.trangthai==='Bán'?'row-ban':''}">
+		
     return `
       <tr class="${d.trangthai==='Nghỉ'?'row-nghi':''}">
         <td>${d.stt}</td>
