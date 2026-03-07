@@ -1,44 +1,35 @@
-<div id="pvtvTab" style="display:none;">
+<div>
 
-<h2>Danh sách PVTV</h2>
+<h2>Phân Vé Từng Vùng (PVTV)</h2>
 
-<div class="filter-bar">
+<br>
 
-<label>Chọn ngày:</label>
+<input type="date" id="date">
 
-<input type="date" id="filterNgay">
+<button onclick="phanVe()">Phân vé</button>
 
-<button onclick="loadPVTV()">🔍 Lọc</button>
+<button onclick="saveData()">Lưu</button>
 
-<button onclick="resetFilter()">♻ Tất cả</button>
+<br><br>
 
-</div>
-
-<div style="overflow:auto; max-height:600px;">
-
-<table>
-
-<thead id="pvtvTotalHead"></thead>
+<table id="pvtvTable">
 
 <thead>
-
 <tr>
-
-<th>ID</th>
 <th>Người bán</th>
-<th>Đài1</th>
-<th>Đài2</th>
-<th>Đài3</th>
+<th>Đài 1</th>
+<th>Đài 2</th>
+<th>Đài 3</th>
 <th>Tổng</th>
-
+<th>Trả</th>
+<th>Bán</th>
 </tr>
-
 </thead>
 
-<tbody id="pvtvList"></tbody>
+<tbody></tbody>
 
 </table>
 
 </div>
 
-</div>
+<script src="../js/pvtv.js"></script>

@@ -16,6 +16,7 @@ app.use(session({
 }));
 
 app.use(express.static("public"));
+app.use("/admin", express.static("admin"));
 
 /* ============================= */
 /*  KẾT NỐI POSTGRESQL (RENDER) */
@@ -267,7 +268,7 @@ function checkAdmin(req, res, next) {
 }
 
 app.get("/admin", checkAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, "public/admin.html"));
+    res.sendFile(path.join(__dirname, "admin/index.html"));
 });
 
 app.get("/logout", (req, res) => {
@@ -277,3 +278,58 @@ app.get("/logout", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server running..."));
+
+app.get("/api/pvtv/phanve", checkAdmin, async (req,res)=>{
+
+const date = req.query.date
+
+const check = await pool.query(
+"SELECT * FROM pvtv WHERE ngay=$1",
+[date]
+)
+
+if(check.rows.length <= 10){
+
+const sellers = await pool.query(
+"SELECT nguoiban FROM dsnb WHERE trangthai='Bán'"
+)
+
+for(const s of sellers.rows){
+
+await pool.query(
+`INSERT INTO pvtv(nguoiban,ngay)
+VALUES($1,$2)`,
+[s.nguoiban,date]
+)
+
+}
+
+}
+
+const result = await pool.query(
+"SELECT * FROM pvtv WHERE ngay=$1 ORDER BY id",
+[date]
+)
+
+res.json(result.rows)
+
+})
+app.put("/api/pvtv/:id", checkAdmin, async (req,res)=>{
+
+const {dai1,dai2,dai3,tong,tratong,ban} = req.body
+
+await pool.query(
+`UPDATE pvtv
+SET dai1=$1,
+dai2=$2,
+dai3=$3,
+tong=$4,
+tratong=$5,
+ban=$6
+WHERE id=$7`,
+[dai1,dai2,dai3,tong,tratong,ban,req.params.id]
+)
+
+res.json({success:true})
+
+})

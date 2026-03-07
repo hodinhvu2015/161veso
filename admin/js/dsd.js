@@ -1,9 +1,11 @@
 async function loadDSD(){
 
 const res = await fetch("/api/dsd")
+
 const data = await res.json()
 
 document.getElementById("dsdList").innerHTML =
+
 data.map(d=>`
 
 <tr>
