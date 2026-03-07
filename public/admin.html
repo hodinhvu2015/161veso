@@ -224,6 +224,7 @@ tr:hover{
       <input type="text" id="newNguoiBan" placeholder="Tên người bán">
       <input type="text" id="newNhom" placeholder="Nhóm">
       <button class="add-btn" id="btnThem" onclick="addDSNB()">➕ Thêm</button>
+	  
 	  <button onclick="toggleSort('trangthai')">🔄 Sort Trạng thái</button>
 		<button onclick="toggleSort('nhom')">🔄 Sort Nhóm</button>
 	
@@ -258,8 +259,14 @@ tr:hover{
       </thead>
       <tbody id="dsnbList"></tbody>
     </table>
-  </div>
+  
+<div class="card-box">
 
+    <div style="margin-bottom:15px;">
+      <input type="text" id="newNguoiBan" placeholder="Tên người bán">
+	  <button onclick="saveAllDSNB()">💾 Lưu tất cả</button>
+	  </div>
+	  </div>
 </div>
 </div>
 </div>
@@ -486,9 +493,7 @@ const rows = data.map(d => {
         <td>${d.stt}</td>
 
         <td>
-          <input value="${d.nguoiban || ''}" 
-                 onchange="saveDSNB(${d.stt})" 
-                 id="ten_${d.stt}">
+          <input value="${d.nguoiban}" id="ten_${d.stt}">
         </td>
 
         <td>
@@ -744,6 +749,55 @@ function parseQuickInput(){
 
   // focus vào nút thêm
   document.getElementById("btnThem").focus();
+}
+async function saveAllDSNB(){
+
+  const rows = document.querySelectorAll("#dsnbList tr");
+
+  for(const row of rows){
+
+    const id = row.children[0].innerText;
+
+    const nguoiban = document.getElementById("ten_"+id).value;
+    const trangthai = document.getElementById("trangthai_"+id).value;
+    const nhom = document.getElementById("nhom_"+id).value;
+    const sapxep1 = document.getElementById("sapxep_"+id).value;
+    const vl = document.getElementById("vl_"+id).value;
+    const vecodinh = document.getElementById("vecodinh_"+id).value;
+
+    let ngaynghi = document.getElementById("ngaynghi_"+id).value;
+    let ngayban = document.getElementById("ngayban_"+id).value;
+
+    if(ngaynghi){
+      const p = ngaynghi.split("-");
+      ngaynghi = p[2]+"-"+p[1]+"-"+p[0];
+    }
+
+    if(ngayban){
+      const p = ngayban.split("-");
+      ngayban = p[2]+"-"+p[1]+"-"+p[0];
+    }
+
+    await fetch("/api/dsnb/"+id+"/full",{
+      method:"PUT",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        nguoiban,
+        trangthai,
+        nhom,
+        sapxep1,
+        vl,
+        vecodinh,
+        ngaynghi,
+        ngayban
+      })
+    });
+
+  }
+
+  alert("✅ Đã lưu toàn bộ dữ liệu");
+
+  loadDSNB();
 }
 </script>
 
