@@ -1,0 +1,44 @@
+<div id="pvtvTab" style="display:none;">
+
+<h2>Danh sách PVTV</h2>
+
+<div class="filter-bar">
+
+<label>Chọn ngày:</label>
+
+<input type="date" id="filterNgay">
+
+<button onclick="loadPVTV()">🔍 Lọc</button>
+
+<button onclick="resetFilter()">♻ Tất cả</button>
+
+</div>
+
+<div style="overflow:auto; max-height:600px;">
+
+<table>
+
+<thead id="pvtvTotalHead"></thead>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Người bán</th>
+<th>Đài1</th>
+<th>Đài2</th>
+<th>Đài3</th>
+<th>Tổng</th>
+
+</tr>
+
+</thead>
+
+<tbody id="pvtvList"></tbody>
+
+</table>
+
+</div>
+
+</div>

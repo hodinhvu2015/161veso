@@ -1,0 +1,210 @@
+body { 
+  margin:0; 
+  font-family: Arial; 
+  display:flex; 
+}
+
+.sidebar {
+  width:220px;
+  height:100vh;
+  background:#2c3e50;
+  color:white;
+  padding:20px;
+}
+
+.sidebar h2 { text-align:center; }
+
+.sidebar ul { list-style:none; padding:0; }
+
+.sidebar li { padding:10px; cursor:pointer; }
+
+.sidebar li:hover { background:#34495e; }
+
+.main {
+  flex:1;
+  padding:30px;
+  background:#ecf0f1;
+  overflow:auto;
+}
+
+.card {
+  background:white;
+  padding:20px;
+  border-radius:8px;
+}
+
+/* FILTER BAR */
+
+.filter-bar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:15px;
+  padding:10px;
+  background:white;
+  border-radius:8px;
+}
+
+.filter-bar input{
+  padding:6px;
+}
+
+.filter-bar button{
+  padding:6px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.filter-bar button:first-of-type{
+  background:#3498db;
+  color:white;
+}
+
+.filter-bar button:last-of-type{
+  background:#e74c3c;
+  color:white;
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:6px;
+  text-align:center;
+}
+
+thead:nth-of-type(2) th{
+  background:#34495e;
+  color:white;
+  position: sticky;
+  top: 40px;
+  z-index: 9;
+}
+
+/* TOTAL ROW */
+
+#pvtvTotalHead tr{
+  background:#ff9800;
+  color:white;
+  font-weight:bold;
+  text-align:center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* CARD */
+
+.card-box{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom:20px;
+}
+
+/* INPUT */
+
+input, select{
+  padding:6px 8px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+/* BUTTON */
+
+button{
+  padding:6px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+/* ADD BUTTON */
+
+.add-btn{
+  background:#27ae60;
+  color:white;
+}
+
+.add-btn:hover{
+  background:#219150;
+}
+
+/* STATUS BADGE */
+
+.badge-ban{
+  background:#2ecc71;
+  color:white;
+  padding:4px 8px;
+  border-radius:12px;
+  font-size:12px;
+}
+
+.badge-nghi{
+  background:#e74c3c;
+  color:white;
+  padding:4px 8px;
+  border-radius:12px;
+  font-size:12px;
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:#2c3e50;
+  color:white;
+}
+
+tr:hover{
+  background:#f2f2f2;
+}
+
+/* ROW STATUS */
+
+.row-ban{
+  background:#d4edda !important;
+}
+
+.row-nghi{
+  background:#ffe6e6 !important;
+}
+
+/* SELECT COLOR */
+
+select.ban{
+  background:#2ecc71;
+  color:white;
+}
+
+select.nghi{
+  background:#e74c3c;
+  color:white;
+}
+
+/* TOTAL */
+
+#tongDangBan{
+  font-size:16px;
+  color:#e67e22;
+  font-weight:bold;
+}
