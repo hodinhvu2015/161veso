@@ -179,6 +179,10 @@ tr:hover{
 .row-nghi{
   background:#ffe6e6 !important;
 }
+/* ban highlight */
+.ban-nghi{
+  background:#d4edda !important;
+}
 
 /* TOTAL */
 #tongDangBan{
@@ -488,7 +492,7 @@ async function loadDSNB(){
 const rows = data.map(d => {
 
     if(d.trangthai === "Bán") tongDangBan++;
-
+		<tr class="${d.trangthai==='Bán'?'row-ban':''}">
     return `
       <tr class="${d.trangthai==='Nghỉ'?'row-nghi':''}">
         <td>${d.stt}</td>
